@@ -1,0 +1,33 @@
+import requests
+import lxml
+from bs4 import BeautifulSoup
+import smtplib
+
+header={
+    "Accept-Language":"en-GB,en-US;q=0.9,en;q=0.8,hi;q=0.7",
+    "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36",
+}
+
+url="https://www.amazon.com/dp/B075CYMYK6?psc=1&ref_=cm_sw_r_cp_ud_ct_FM9M699VKHTT47YD50Q6"
+
+amazon_response=requests.get(url=url,headers=header)
+
+soup=BeautifulSoup(amazon_response.content,"lxml")
+
+price=soup.find(class_="a-offscreen").get_text()
+new_price=float(price.split("$")[1])
+print(new_price)
+
+if new_price == 99.99:
+
+   with smtplib.SMTP(host="smtp.gmail.com", port=587) as connection:
+     my_email = "hireriya2005@gmail.com"
+     my_password = "rxvr eawx rcrs cvbw"
+     connection.starttls()
+     result = connection.login(my_email, password=my_password)
+     connection.sendmail(
+         from_addr=my_email,
+         to_addrs="hireasawari@gmail.com",
+         msg=f"Subject:Amazon Price Alert!  \n\n The new price is ${new_price} \n\n Check this out: \n\n  {url}".encode("utf-8")
+     )
+
